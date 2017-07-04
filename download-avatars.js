@@ -43,9 +43,21 @@ function downloadImageByURL(url, filePath){
     .pipe(fs.createWriteStream(filePath))
 }
 
-getRepoContributors(process.argv[2], process.argv[3], function(data){
-  data.forEach(function(item){
-    const downloadPath = `./avatars/${item.login}.jpg`;
-    downloadImageByURL(item.avatar_url, downloadPath);
+// define input variables
+var repoOwner = process.argv[2];
+var repoName = process.argv[3];
+
+// error handling
+if(!authCode){
+  console.log("Please check if .env file is missing or corrupt");
+} else if(!repoOwner || !repoName){
+  console.log("Please state repo info on terminal");
+} else {
+  // if nothing wrong, try to access api
+  getRepoContributors(repoOwner, repoName, function(data){
+    data.forEach(function(item){
+      const downloadPath = `./avatars/${item.login}.jpg`;
+      downloadImageByURL(item.avatar_url, downloadPath);
+    });
   });
-});
+}
