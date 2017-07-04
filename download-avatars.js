@@ -4,6 +4,8 @@
 
 var request = require('request');
 var fs = require('fs');
+const dotenv = require("dotenv");
+const authCode = dotenv.parse(fs.readFileSync('.env')).GITHUB_ACCESS_TOKEN;
 
 function getRequestOptions(path){
   return {
@@ -12,7 +14,7 @@ function getRequestOptions(path){
       'User-Agent': 'GitHub Avatar Downloader - Student Project'
     },
     qs: {
-      access_token: process.env.GITHUB_TOKEN
+      access_token: authCode
     }
   };
 }
