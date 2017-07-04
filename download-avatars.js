@@ -1,3 +1,7 @@
+// GITHUB AVATAR DOWNLOADER
+// Functionality: downloads a repository's contributors' avatars as jpg images
+// Call syntax example: node download_avatars.js <repoOwner> <repoName>
+
 var request = require('request');
 var fs = require('fs');
 
@@ -13,7 +17,7 @@ function getRequestOptions(path){
   };
 }
 
-function getRepoContributors(repoOwner, repoName, callback) {
+function getRepoContributors(repoOwner, repoName, callback){
   const path = `/repos/${repoOwner}/${repoName}/contributors`;
   request(getRequestOptions(path), function(err, response, body) {
     try {
@@ -31,6 +35,7 @@ function downloadImageByURL(url, filePath){
       throw err;
     })
     .on('response', function(response){
+      // tell user the image is downloading
       console.log("Downloading image from " + url);
     })
     .pipe(fs.createWriteStream(filePath))
