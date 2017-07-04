@@ -1,4 +1,5 @@
 var request = require('request');
+var fs = require('fs');
 
 function getRequestOptions(path){
   return {
@@ -12,20 +13,32 @@ function getRequestOptions(path){
   };
 }
 
-function getRepoContributors(repoOwner, repoName, cb) {
+function getRepoContributors(repoOwner, repoName, callback) {
   const path = `/repos/${repoOwner}/${repoName}/contributors`;
   request(getRequestOptions(path), function(err, response, body) {
     try {
       const data = JSON.parse(body);
-      cb(data);
+      callback(data);
     } catch (err) {
       console.log("Error parsing content body");
     }
   });
 }
 
-getRepoContributors("jquery", "jquery", function(data){
+function downloadImageByURL(url, filePath){
+  request.get(url)
+    .on('error', function(err){
+      throw err;
+    })
+    .on('response', function(response){
+      console.log("Downloading image from " + url);
+    })
+    .pipe(fs.createWriteStream(filePath))
+}
+
+getRepoContributors(process.argv[2], process.argv[3], function(data){
   data.forEach(function(item){
-    console.log(item.avatar_url);
+    const downloadPath = `./avatars/${item.login}.jpg`;
+    downloadImageByURL(item.avatar_url, downloadPath);
   });
 });
